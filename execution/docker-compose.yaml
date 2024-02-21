@@ -1,0 +1,27 @@
+version: "1.0"
+
+services:
+  splitwise_be_clone:
+    build: ../
+    hostname: splitwise_be_clone
+    command: >
+      sh -c "python manage.py migrate &&
+            hypercorn splitwise_be_clone.asgi:application --bind 0.0.0.0:8000 --reload -w 2 --keep-alive 30 --websocket-ping-interval 10  --access-logfile '-'"
+    env_file:
+      - ./.env
+    volumes:
+      - ../:/splitwise_be_clone/
+    expose:
+      - 8000
+    ports:
+      - "8000:8000"
+    networks:
+      - splitwise_be_clone_net
+    restart: "always"
+
+networks:
+  splitwise_be_clone_net:
+    driver: bridge
+
+volumes:
+  splitwise_be_clone_data:
