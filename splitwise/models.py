@@ -20,12 +20,13 @@ class SplitType(models.IntegerChoices):
 
 class OwePaymentStatus(models.IntegerChoices):
     PENDING = 0, "PENDING"
-    COMPLETE = 1, "COMPLETE"
+    SETTLED = 1, "SETTLED"
+    DELETED = 2, "DELETED"
 
 
 class Payment(BaseModel):
     user = models.ForeignKey(User, blank=False, null=True, on_delete=models.CASCADE)
-    amount = models.DecimalField(default=0.00, max_digits=20, decimal_places=2)
+    amount = models.DecimalField(default=0.00, max_digits=20, decimal_places=2) # type: ignore
     split_type = models.IntegerField(default=SplitType.EQUAL, choices=SplitType.choices)
 
 
@@ -33,5 +34,5 @@ class UserOwePayment(BaseModel):
     user_paid = models.ForeignKey(User, blank=False, null=True, on_delete=models.CASCADE, related_name="user_paid")
     user_owe = models.ForeignKey(User, blank=False, null=True, on_delete=models.CASCADE, related_name="user_owe")
     payment = models.ForeignKey(Payment, blank=False, null=True, on_delete=models.CASCADE)
-    amount = models.DecimalField(default=0.00, max_digits=20, decimal_places=2)
+    amount = models.DecimalField(default=0.00, max_digits=20, decimal_places=2) # type: ignore
     status = models.IntegerField(default=OwePaymentStatus.PENDING, choices=OwePaymentStatus.choices)

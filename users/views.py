@@ -46,8 +46,8 @@ class UserSignInView(APIView):
         
         user = None
         request_body = params.data
-        email = request_body.get("email")
-        password = request_body.get("password")
+        email = request_body["email"] # type: ignore
+        password = request_body["password"] # type: ignore
 
         try:
             user = UserDbService.get_user(email=email)
@@ -115,7 +115,13 @@ class UpdateUserView(APIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
-        data_to_update = {key: params.data[key] for key in params.data if params.data.get(key)}
+
+        request_body = params.data
+        data_to_update = {
+            key: params.data[key]
+            for key in request_body
+            if request_body.get(key) # type: ignore
+        }
         user = UserDbService.update_user(user.id, data_to_update)
 
         return Response(
